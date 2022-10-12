@@ -112,4 +112,13 @@ class API_Response {
 	public function set_error( WP_Error $error ) {
 		$this->error = $error;
 	}
+
+	/**
+	 * Did the API response include an error?
+	 *
+	 * @return bool
+	 */
+	public function has_error(): bool {
+		return is_wp_error( $this->error );
+	}
 }

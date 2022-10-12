@@ -58,9 +58,9 @@ class Elasticsearch {
 	 * Index a post in Elasticsearch.
 	 *
 	 * @param int $post_id Post ID.
-	 * @return bool|\WP_Error True on success, WP_Error on failure.
+	 * @return \ES_Toolkit\Structures\API_Response
 	 */
-	public static function index_post( int $post_id ) {
+	public static function index_post( int $post_id ): API_Response {
 		return self::$adapter->index_post( $post_id );
 	}
 

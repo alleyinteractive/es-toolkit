@@ -15,14 +15,15 @@
 namespace ES_Toolkit;
 
 use ES_Toolkit\Adapters\Adapter;
+use ES_Toolkit\Tools\Indexed_Source_Data\Indexed_Source_Data;
 
 // Plugin autoloader.
-require_once __DIR__ . '/src/autoload.php';
+require_once __DIR__ . '/inc/autoload.php';
 
 add_action( 'after_setup_theme', __NAMESPACE__ . '\loader' );
 
 /**
- * Initialize the mobile API.
+ * Load the plugin.
  */
 function loader() {
 	/**
@@ -32,7 +33,7 @@ function loader() {
 	 *                             `\ES_Toolkit\Adapters\Adapter`.
 	 */
 	$adapter = apply_filters( 'es_toolkit_adapter', null );
-	if ( ! ( $adapter && is_subclass_of( $adapter, Adapter::class ) ) ) {
+	if ( ! ( $adapter && $adapter instanceof Adapter ) ) {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'No adapter is set for ES Toolkit.', 'es-toolkit' ), '0.1' );
 		return;
 	}
@@ -54,6 +55,7 @@ function loader() {
 	$tools = apply_filters(
 		'es_toolkit_registered_tools',
 		[
+			Indexed_Source_Data::class,
 		]
 	);
 	$registrar->register_tools( $tools );
@@ -65,4 +67,8 @@ function loader() {
 	 * @param Tool_Registrar $registrar Tool registrar.
 	 */
 	do_action( 'es_toolkit_init', $registrar );
+
+	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		\WP_CLI::add_command( 'es-toolkit', '\ES_Toolkit\CLI_Command' );
+	}
 }

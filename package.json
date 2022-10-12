@@ -1,0 +1,32 @@
+{
+  "name": "es-toolkit",
+  "version": "0.1.0",
+  "description": "A developer's toolkit for working with Elasticsearch in WordPress",
+  "main": "build/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "wp-scripts build",
+    "start": "wp-scripts start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alleyinteractive/es-toolkit.git"
+  },
+  "keywords": [
+    "WordPress",
+    "Elasticsearch",
+    "Gutenberg"
+  ],
+  "author": "Matthew Boynes",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/alleyinteractive/es-toolkit/issues"
+  },
+  "homepage": "https://github.com/alleyinteractive/es-toolkit#readme",
+  "devDependencies": {
+    "@wordpress/scripts": "^23.0.0"
+  }
+}

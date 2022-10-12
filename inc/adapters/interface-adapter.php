@@ -34,7 +34,7 @@ interface Adapter {
 	 * Index a post in Elasticsearch.
 	 *
 	 * @param int $post_id Post ID.
-	 * @return bool|\WP_Error True on success, WP_Error on failure.
+	 * @return \ES_Toolkit\Structures\API_Response
 	 */
 	public function index_post( int $post_id );
 

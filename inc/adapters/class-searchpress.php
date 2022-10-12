@@ -28,7 +28,9 @@ class SearchPress implements Adapter {
 	public function search( Search_Query $query ): Search_Results {
 		$search = new SP_WP_Search(
 			[
-				'query' => $query->get_search_string(),
+				'query'          => $query->get_search_string(),
+				'paged'          => $query->get_arg( 'page' ),
+				'posts_per_page' => $query->get_arg( 'per_page' ),
 			]
 		);
 
@@ -55,15 +57,15 @@ class SearchPress implements Adapter {
 	 * Index a post in Elasticsearch.
 	 *
 	 * @param int $post_id Post ID.
-	 * @return bool|\WP_Error True on success, WP_Error on failure.
+	 * @return \ES_Toolkit\Structures\API_Response
 	 */
-	public function index_post( int $post_id ) {
+	public function index_post( int $post_id ): API_Response {
 		$response = SP_API()->index_post( $post_id );
 
 		// The response comes back as stdClass, convert to array(s).
 		$response = json_decode( wp_json_encode( $response ), true );
 
-		return $this->check_response_for_errors( $response );
+		return $this->build_api_response( $response );
 	}
 
 	/**
@@ -85,12 +87,23 @@ class SearchPress implements Adapter {
 			true
 		);
 
+		return $this->build_api_response( $response );
+	}
+
+	/**
+	 * Build the API_Response object from a (SearchPress-manipulated) API response.
+	 *
+	 * @param array|\WP_Error $response Response from SearchPress.
+	 * @return API_Response
+	 */
+	protected function build_api_response( $response ): API_Response {
 		$error = $this->check_response_for_errors( $response );
 		if ( is_wp_error( $error ) ) {
 			return API_Response::error( $error );
 		}
+
 		return new API_Response(
-			json_decode( $response, true ) ?? [],
+			$response,
 			(int) SP_API()->last_request['response_code'],
 			(array) SP_API()->last_request['response_headers']
 		);
@@ -131,7 +144,7 @@ class SearchPress implements Adapter {
 				)
 			);
 		}
-		if ( ! is_object( $response ) ) {
+		if ( ! is_array( $response ) ) {
 			return new WP_Error(
 				'error',
 				sprintf(
